@@ -26,7 +26,7 @@ print(df_total.corr(numeric_only=True).T)
 
 ### LOGISTIC REGRESSION
 X = match_data.select_dtypes(include=[np.number])  # Exclude the team names 
-y = df['FTR']  
+y = df['FTR'].astype('category').cat.codes
 
 # Estandarizar
 std_scaler = preprocessing.StandardScaler()
