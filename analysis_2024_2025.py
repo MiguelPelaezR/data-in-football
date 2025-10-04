@@ -44,6 +44,12 @@ print("Train accuracy:", log_reg.score(X_train, y_train))
 print("Test accuracy:", log_reg.score(X_test, y_test))
 print("Coeficientes por clase:", log_reg.coef_)
 
+feature_importance = np.mean(np.abs(log_reg.coef_), axis=0)
+plt.barh(X.columns, feature_importance)
+plt.title("Feature Importance")
+plt.xlabel("Importance")
+plt.show()
+
 
 ### RAMDOM FOREST
 from sklearn.ensemble import RandomForestClassifier
