@@ -88,3 +88,19 @@ total_madrid_wins = madrid_home_wins + madrid_away_wins
 
 print(f"El modelo predice que el Real Madrid ganará {total_madrid_wins} partidos en 2025.")
 
+
+#  Contar victorias del Barcelona
+
+Barcelona_home_wins = df_2025[
+    (df_2025['HomeTeam'] == 'Barcelona') & (df_2025['pred_FTR'] == 'H')
+].shape[0]
+
+Barcelona_away_wins = df_2025[
+    (df_2025['AwayTeam'] == 'Barcelona') & (df_2025['pred_FTR'] == 'A')
+].shape[0]
+
+total_Barcelona_wins = Barcelona_home_wins + Barcelona_away_wins
+
+print(f"El modelo predice que el Barcelona ganará {total_Barcelona_wins} partidos en 2025.")
+
+

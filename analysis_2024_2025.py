@@ -15,7 +15,7 @@ titles = list(df.columns)
 print(titles)
 
 # Lets divide the data frame in to some features:
-match_data = df[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR']]
+match_data = df[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'BFH', 'BFD', 'BFA', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']]
 FTR_data = pd.get_dummies(df[['FTR']])
 
 df_total = pd.concat([match_data, FTR_data], axis=1)

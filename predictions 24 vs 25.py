@@ -21,14 +21,14 @@ df_2025 = df_2025.dropna(axis=1)
 
 
 # Lets divide the data frame in to some features:
-variables = ['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR']
+variables = ['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']
 X_train = df_2024[variables]
 y_train = df_2024['FTR'].astype('category').cat.codes
 
 std_scaler = preprocessing.StandardScaler()
 X_train = std_scaler.fit_transform(X_train)
 
-X_test = df_2025[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR']]
+X_test = df_2025[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']]
 y_test = df_2025['FTR'].astype('category').cat.codes
 
 X_test = std_scaler.fit_transform(X_test)
