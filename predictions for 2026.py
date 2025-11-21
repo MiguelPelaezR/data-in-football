@@ -9,10 +9,10 @@ from sklearn.multiclass import OneVsOneClassifier
 from sklearn.metrics import accuracy_score
 
 '''
-The goal to this proyect is to try to predict the results of 2025 using
+The goal to this proyect is to try to predict the results of the 2024/2025 season using
 the match data from the other seasons.
 
-We will use the 2025 to test how accurate the model is.
+We will use the data from the 2024/2025 season to test how accurate the model is.
 '''
 
 ### We will start with the predictions for 2025:
@@ -21,7 +21,7 @@ We will use the 2025 to test how accurate the model is.
 data_until_2024 = pd.read_csv('datasets/Dataset from 2019 to 2024.csv',sep=';')
 data_2025 = pd.read_csv('datasets/LaLiga_24_25_transform.csv', sep=';')
 
-print(data_2025.columns)
+
 
 # Lets divide the data frame and categorize the data:
 # For training the OvO model:
@@ -46,8 +46,6 @@ X_train.columns = X_train.columns.astype(str)
 X_train = std_scaler.fit_transform(X_train)
 
 y_train = data_until_2024['FTR'].astype('category').cat.codes
-
-
 
 
 
@@ -131,7 +129,7 @@ for index, row in data_2025.iterrows():
 
 predict_table = predict_table.sort_values(by=['Points', 'W'], ascending=False)
 
-
+print('\n--- PREDICTION WITH THE MODEL ---')
 print(predict_table)
 
 
@@ -167,7 +165,17 @@ for i in range(380):
 
 classification_table = classification_table.sort_values(by=['Points', 'W'], ascending=False)
 
+print('\n--- CLASSIFICATION SEASON 2024/2025 ---')
 print(classification_table)
 
 
 ## Tabla de errores:
+
+differences_table = predict_table - classification_table
+differences_table = differences_table.reindex(index=predict_table.index, columns=predict_table.columns)
+differences_table = differences_table.drop(['Played'], axis=1)
+
+
+print('\n--- DIFFERENCE BETWEEN PREDICTION AND REALITY ---')
+print(differences_table)
+
