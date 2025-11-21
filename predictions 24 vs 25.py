@@ -56,8 +56,6 @@ plt.show()
 
 
 
-
-
 ### With Logistic regresion:
 
 # Modelo de regresión logística multinomial

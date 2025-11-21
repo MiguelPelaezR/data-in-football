@@ -28,18 +28,24 @@ data_2025 = pd.read_csv('datasets/LaLiga_24_25_transform.csv', sep=';')
 numeric_columns = [
     'HTHG', 'HTAG', 'HS', 'AS', 'HST', 'AST', 'HF', 'AF', 
     'HC', 'AC', 'HY', 'AY', 'HR', 'AR',
+]
+
+bets_columns = [
     'B365H', 'B365D', 'B365A', 'BWH', 'BWD', 'BWA', 'PSH', 'PSD', 'PSA', 
     'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA' 
 ]
 
 match_data_train = data_until_2024[numeric_columns]
+bets_data_train = data_until_2024[bets_columns]
 htr_train = data_until_2024['HTR'].astype('category').cat.codes
 home_teams = data_until_2024['HomeTeam'].astype('category').cat.codes
 away_teams = data_until_2024['AwayTeam'].astype('category').cat.codes
 
 
 
-X_train = pd.concat([home_teams,away_teams, htr_train, match_data_train], axis=1)
+X_train = pd.concat([home_teams,away_teams, htr_train, match_data_train, bets_data_train], axis=1)
+#X_train = pd.concat([home_teams,away_teams, htr_train, match_data_train], axis=1)
+
 std_scaler = StandardScaler()
 
 X_train.columns = X_train.columns.astype(str)
@@ -51,11 +57,13 @@ y_train = data_until_2024['FTR'].astype('category').cat.codes
 
 # To test it
 match_data_test = data_2025[numeric_columns]
+bets_data_test = data_2025[bets_columns]
 htr_test = data_2025['HTR'].astype('category').cat.codes
 home_teams = data_2025['HomeTeam'].astype('category').cat.codes
 away_teams = data_2025['AwayTeam'].astype('category').cat.codes
 
-X_test = pd.concat([home_teams,away_teams, htr_test, match_data_test], axis=1)
+X_test = pd.concat([home_teams,away_teams, htr_test, match_data_test, bets_data_test], axis=1)
+#X_test = pd.concat([home_teams,away_teams, htr_test, match_data_test], axis=1)
 
 X_test.columns = X_test.columns.astype(str)
 X_test = std_scaler.fit_transform(X_test)

@@ -5,80 +5,108 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.multiclass import OneVsOneClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, precision_score, recall_score
+from funtions import prepare_data
+import warnings
+from sklearn.exceptions import ConvergenceWarning
+
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+'''
+We will evaluate how accurate teh models One vs One and One vs All are 
+'''
+
+
+# We store the different datasets:
+data_until_2024 = pd.read_csv('datasets/Dataset from 2019 to 2024.csv',sep=';')
+data_2025 = pd.read_csv('datasets/LaLiga_24_25_transform.csv', sep=';')
 
 
 
+# Lets divide the data frame and categorize the data:
 
-df = pd.read_csv('datasets/LaLiga_24_25.csv')
+numeric_columns = [
+    'HTHG', 'HTAG', 'HS', 'AS', 'HST', 'AST', 'HF', 'AF', 
+    'HC', 'AC', 'HY', 'AY', 'HR', 'AR',
+]
 
-#Upon review, it was observed that all columns containing missing values are related to betting data; therefore, these variables will be excluded from the analysis.
-df = df.dropna(axis=1)
+bets_columns = [
+    'B365H', 'B365D', 'B365A', 'BWH', 'BWD', 'BWA', 'PSH', 'PSD', 'PSA', 
+    'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA' 
+]
 
-titles = list(df.columns)
-print(titles)
+# Split data into training and test sets for training the OvO model:
+X_train, X_train_without_bets = prepare_data(data_until_2024, numeric_columns, bets_columns)
+X_test, X_test_without_bets = prepare_data(data_2025, numeric_columns, bets_columns)
 
-# Lets divide the data frame in to some features:
-match_data = df[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'BFH', 'BFD', 'BFA', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']]
-FTR_data = df['FTR'].astype('category').cat.codes
+# Standarize the data:
+scaler = StandardScaler()
 
-#df_total = pd.concat([match_data, FTR_data], axis=1)
-X = match_data.select_dtypes(include=[np.number])  # Exclude the team names 
-y = FTR_data
+X_train_scaled = pd.DataFrame(scaler.fit_transform(X_train), columns=X_train.columns.astype(str))
+X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_test.columns.astype(str))
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+X_train_no_bets_scaled = pd.DataFrame(scaler.fit_transform(X_train_without_bets),columns=X_train_without_bets.columns.astype(str))
+X_test_no_bets_scaled = pd.DataFrame(scaler.transform(X_test_without_bets),columns=X_test_without_bets.columns.astype(str))
 
-### Training logistic regression model using One-vs-All
+y_train = data_until_2024['FTR'].astype('category').cat.codes
+y_test = data_2025['FTR'].astype('category').cat.codes
 
-
-model_ova = LogisticRegression(multi_class='ovr', max_iter=1000)
-model_ova.fit(X_train, y_train)
-
-# Make predictions on the test set
-y_pred_ova = model_ova.predict(X_test)
-
-# Calculate accuracy
-print("One-vs-All (OvA) Strategy:")
-print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ova),2)}%")
-
-
-### Training logistic regression model using One-vs-One
+## initialize the model OvO:
 
 model_ovo = OneVsOneClassifier(LogisticRegression(max_iter=1000))
+
+### WITH BETS:
+
 model_ovo.fit(X_train, y_train)
 
-# Make predictions on the test set
 y_pred_ovo = model_ovo.predict(X_test)
-# Calculate accuracy
+
 print("One-vs-One (OvO) Strategy:")
+print('--- ACCURACY WITH BETS ---')
 print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ovo),2)}%")
+print(f" F1 macro: {f1_score(y_test, y_pred_ovo, average='macro'):.4f}")
+print("\n Confusion matrix:")
+print(confusion_matrix(y_test, y_pred_ovo))
 
+### WITH OUT BETS:
 
-plt.figure(figsize=(10, 5))
-sns.countplot(x=y_test, hue=y_pred_ovo, palette='Set1')
-plt.title('Predicted vs Actual Obesity Levels')
-plt.xlabel('Actual Obesity Level')
-plt.ylabel('Count')
-plt.legend(title='Predicted Obesity Level', loc='upper right')
-plt.show()
+model_ovo.fit(X_train_without_bets, y_train)
 
-feature_importance = np.mean(np.abs(model_ova.coef_), axis=0)
-plt.barh(X.columns, feature_importance)
-plt.title("Feature Importance")
-plt.xlabel("Importance")
-plt.show()
+y_pred_ovo_no_bets = model_ovo.predict(X_test_without_bets)
 
-
-
+print('\n--- ACCURACY WITH OUT BETS ---')
+print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ovo_no_bets),2)}%")
+print(f"F1 macro: {f1_score(y_test, y_pred_ovo_no_bets, average='macro'):.4f}")
+print("\n Confusion matrix:")
+print(confusion_matrix(y_test, y_pred_ovo_no_bets))
 
 
 
+## INICIALIZATE OvA MODEL:
+model_ova = OneVsRestClassifier(LogisticRegression(max_iter=1000))
 
+### WITH BETS:
+model_ova.fit(X_train,y_train)
 
+y_pred_ova = model_ova.predict(X_test)
 
+print("One-vs-All (OvA) Strategy:")
+print('--- ACCURACY WITH BETS ---')
+print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ova),2)}%")
+print(f" F1 macro: {f1_score(y_test, y_pred_ova, average='macro'):.4f}")
+print("\n Confusion matrix:")
+print(confusion_matrix(y_test, y_pred_ova))
 
+### WITH OUT BETS:
 
+model_ova.fit(X_train_without_bets, y_train)
 
+y_pred_ova_no_bets = model_ova.predict(X_test_without_bets)
 
+print('\n--- ACCURACY WITH OUT BETS ---')
+print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ova_no_bets),2)}%")
+print(f"F1 macro: {f1_score(y_test, y_pred_ova_no_bets, average='macro'):.4f}")
+print("\n Confusion matrix:")
+print(confusion_matrix(y_test, y_pred_ova_no_bets))
 
