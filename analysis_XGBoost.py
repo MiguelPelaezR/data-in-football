@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
 
@@ -79,15 +78,12 @@ xgb.fit(X_train, y_train)
 y_pred_xgb = xgb.predict(X_test)
 
 #### Evaluation:
-accuracy = accuracy_score(y_test, y_pred_xgb)
-f1 = f1_score(y_test, y_pred_xgb, average='macro')
-cm = confusion_matrix(y_test, y_pred_xgb)
 
 print(f"XGBoost Evaluation:")
-print(f" Accuracy: {accuracy:.4f}")
-print(f" F1 macro: {f1:.4f}")
+print(f" Accuracy: {np.round(100*accuracy_score(y_test, y_pred_xgb),2)}%")
+print(f" F1 macro: {f1_score(y_test, y_pred_xgb, average='macro'):.4f}")
 print("\n Confusion matrix:")
-print(cm)
+print(confusion_matrix(y_test, y_pred_xgb))
 
 
 
@@ -96,16 +92,12 @@ xgb.fit(X_train_without_bets, y_train)
 y_pred_no_bets = xgb.predict(X_test_without_bets)
 
 #### Evaluation:
-accuracy_no_bets = accuracy_score(y_test, y_pred_no_bets)
-f1_no_bets = f1_score(y_test, y_pred_no_bets, average='macro')
-cm_no_bets = confusion_matrix(y_test, y_pred_no_bets)
 
 print(f"\n XGBoost Evaluation WITH OUT BETS:")
-print(f" Accuracy: {accuracy_no_bets:.4f}")
-print(f" F1 macro: {f1_no_bets:.4f}")
+print(f" Accuracy: {np.round(100*accuracy_score(y_test, y_pred_no_bets),2)}%")
+print(f" F1 macro: {f1_score(y_test, y_pred_no_bets, average='macro'):.4f}")
 print("\n Confusion matrix:")
-print(cm_no_bets)
-
+print(confusion_matrix(y_test, y_pred_no_bets))
 '''
 The model works better without bets rather than with the bets variables
 '''

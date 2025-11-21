@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, precision_score, recall_score
 from funtions import prepare_data
 import warnings
@@ -14,9 +13,8 @@ from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 '''
-We will evaluate how accurate the models One vs One and One vs All are 
+We will evaluate how accurate the model Random Forest is 
 '''
-
 
 # We store the different datasets:
 data_until_2024 = pd.read_csv('datasets/Dataset from 2019 to 2024.csv',sep=';')
@@ -36,7 +34,7 @@ bets_columns = [
     'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA' 
 ]
 
-# Split data into training and test sets for training the OvO model:
+# Split data into training and test sets for training the Random Forest model:
 X_train, X_train_without_bets = prepare_data(data_until_2024, numeric_columns, bets_columns)
 X_test, X_test_without_bets = prepare_data(data_2025, numeric_columns, bets_columns)
 
@@ -52,62 +50,40 @@ X_test_no_bets_scaled = pd.DataFrame(scaler.transform(X_test_without_bets),colum
 y_train = data_until_2024['FTR'].astype('category').cat.codes
 y_test = data_2025['FTR'].astype('category').cat.codes
 
-## initialize the model OvO:
+## initialize the model Random Forest
 
-model_ovo = OneVsOneClassifier(LogisticRegression(max_iter=1000))
-
-### WITH BETS:
-
-model_ovo.fit(X_train_scaled, y_train)
-
-y_pred_ovo = model_ovo.predict(X_test_scaled)
-
-print("~~~~ One-vs-One (OvO) Strategy: ~~~~")
-
-print('--- ACCURACY WITH BETS ---')
-print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ovo),2)}%")
-print(f" F1 macro: {f1_score(y_test, y_pred_ovo, average='macro'):.4f}")
-print("\n Confusion matrix:")
-print(confusion_matrix(y_test, y_pred_ovo))
-
-### WITH OUT BETS:
-
-model_ovo.fit(X_train_no_bets_scaled, y_train)
-
-y_pred_ovo_no_bets = model_ovo.predict(X_test_no_bets_scaled)
-
-print('\n--- ACCURACY WITH OUT BETS ---')
-print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ovo_no_bets),2)}%")
-print(f"F1 macro: {f1_score(y_test, y_pred_ovo_no_bets, average='macro'):.4f}")
-print("\n Confusion matrix:")
-print(confusion_matrix(y_test, y_pred_ovo_no_bets))
-
-
-
-## INICIALIZATE OvA MODEL:
-model_ova = OneVsRestClassifier(LogisticRegression(max_iter=1000))
+rf = RandomForestClassifier(n_estimators=1000, random_state=42)
 
 ### WITH BETS:
-model_ova.fit(X_train,y_train)
 
-y_pred_ova = model_ova.predict(X_test)
+rf.fit(X_train_scaled, y_train)
 
-print("\n~~~~ One-vs-All (OvA) Strategy: ~~~~")
+y_pred_rf = rf.predict(X_test_scaled)
+
+
+print("Random Forest Strategy:")
+
 print('--- ACCURACY WITH BETS ---')
-print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ova),2)}%")
-print(f" F1 macro: {f1_score(y_test, y_pred_ova, average='macro'):.4f}")
+print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_rf),2)}%")
+print(f" F1 macro: {f1_score(y_test, y_pred_rf, average='macro'):.4f}")
 print("\n Confusion matrix:")
-print(confusion_matrix(y_test, y_pred_ova))
+print(confusion_matrix(y_test, y_pred_rf))
 
-### WITH OUT BETS:
 
-model_ova.fit(X_train_without_bets, y_train)
+### WITH OUT BETS
+rf.fit(X_train_no_bets_scaled, y_train)
 
-y_pred_ova_no_bets = model_ova.predict(X_test_without_bets)
+y_pred_rf_no_bets = rf.predict(X_test_no_bets_scaled)
 
 print('\n--- ACCURACY WITH OUT BETS ---')
-print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_ova_no_bets),2)}%")
-print(f"F1 macro: {f1_score(y_test, y_pred_ova_no_bets, average='macro'):.4f}")
+print(f"Accuracy: {np.round(100*accuracy_score(y_test, y_pred_rf_no_bets),2)}%")
+print(f"F1 macro: {f1_score(y_test, y_pred_rf_no_bets, average='macro'):.4f}")
 print("\n Confusion matrix:")
-print(confusion_matrix(y_test, y_pred_ova_no_bets))
+print(confusion_matrix(y_test, y_pred_rf_no_bets))
+
+
+
+
+
+
 
