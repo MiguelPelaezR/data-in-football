@@ -11,11 +11,11 @@ df = pd.read_csv('datasets/LaLiga_24_25.csv')
 #Upon review, it was observed that all columns containing missing values are related to betting data; therefore, these variables will be excluded from the analysis.
 df = df.dropna(axis=1)
 
-titles = list(df.columns)
-print(titles)
+'''titles = list(df.columns)
+print(titles)'''
 
 # Lets divide the data frame in to some features:
-match_data = df[['HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'BFH', 'BFD', 'BFA', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']]
+match_data = df[['HTHG', 'HTAG', 'HS', 'AS', 'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR', 'B365H', 'B365D', 'B365A', 'BFH', 'BFD', 'BFA', 'PSH', 'PSD', 'PSA', 'MaxH', 'MaxD', 'MaxA', 'AvgH', 'AvgD', 'AvgA']]
 FTR_data = pd.get_dummies(df[['FTR']])
 
 df_total = pd.concat([match_data, FTR_data], axis=1)
