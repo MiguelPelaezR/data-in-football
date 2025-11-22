@@ -3,9 +3,9 @@ Machine Learning Models for Predicting Home Win, Away Win, or Draw
 
 This project analyzes football match data and applies multiple machine learning models to predict match outcomes. The goal is to classify each match into one of three categories:
 
-**- Home Win (H)
-- Draw (D)
-- Away Win (A)**
+**- Home Win (H)**
+**- Draw (D)**
+**- Away Win (A)**
 
 The workflow includes data cleaning, exploratory analysis in Power BI, model training, evaluation, and real-season predictions.
 
@@ -87,3 +87,25 @@ Model evaluation metrics
 Power BI dashboards for visualization
 
 Season predictions for 2024/2025
+
+# 🛠️ Technologies Used
+
+- **Python**
+
+- pandas
+
+- numpy
+
+- scikit-learn
+
+- **Power BI** (for data cleaning and visualization)
+
+# 🚀 Future Improvements
+
+- Hyperparameter optimization (GridSearchCV / RandomizedSearchCV)
+
+- Incorporating advanced features (Elo ratings, expected goals, player stats)
+
+- Adding match probability predictions instead of just categorical output
+
+
