@@ -1,4 +1,4 @@
-**🏆 # Football Match Outcome Prediction**
+# 🏆 Football Match Outcome Prediction
 Machine Learning Models for Predicting Home Win, Away Win, or Draw
 
 This project analyzes football match data and applies multiple machine learning models to predict match outcomes. The goal is to classify each match into one of three categories:
@@ -9,7 +9,7 @@ This project analyzes football match data and applies multiple machine learning 
 
 The workflow includes data cleaning, exploratory analysis in Power BI, model training, evaluation, and real-season predictions.
 
-**📊# Project Overview**
+# 📊 Project Overview
 
 The project is divided into several stages:
 
@@ -49,7 +49,7 @@ Confusion matrix
 
 Feature importance (when applicable)
 
-**# 🧠 Why One-vs-One (OvO)?**
+## 🧠 Why One-vs-One (OvO)?
 
 Through experimentation, the OvO approach consistently achieved the best performance for this three-class classification problem.
 Therefore, the final predictive scripts use the OvO strategy.
