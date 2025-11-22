@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, precision_score, recall_score
@@ -52,7 +50,7 @@ X_test_no_bets_scaled = pd.DataFrame(scaler.transform(X_test_without_bets),colum
 y_train = data_until_2024['FTR'].astype('category').cat.codes
 y_test = data_2025['FTR'].astype('category').cat.codes
 
-## initialize the model OvO:
+## Initialize the model OvO:
 
 model_ovo = OneVsOneClassifier(LogisticRegression(max_iter=1000))
 

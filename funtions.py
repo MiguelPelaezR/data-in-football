@@ -22,3 +22,8 @@ def prepare_data(data, numeric_cols, bets_cols):
     ], axis=1)
     
     return X_with_bets, X_without_bets
+
+
+def LimpiarDF(df):
+    incompleto = [item for item in titles if df[item].isna().any()]
+    return df.drop(incompleto)
